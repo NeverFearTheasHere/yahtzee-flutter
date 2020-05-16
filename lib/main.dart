@@ -1,6 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:yahtzee/models/DieModel.dart';
+
+import 'models/GameModel.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,73 +12,70 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Yahtzee',
       home: HomePage(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class HomePage extends StatefulWidget {
-  @override
-  _HomePageState createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  static Random random = new Random();
-  List<int> diceValues = new List.generate(5, (_) => random.nextInt(6) + 1);
-
-  void rollDice() {
-    setState(() {
-      diceValues = new List.generate(5, (_) => random.nextInt(6) + 1);
-    });
-  }
-
+class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Yahtzee'),
-        backgroundColor: Colors.pink,
-      ),
-      body: Column(
-        children: <Widget>[
-          Dice(diceValues: diceValues),
-          RaisedButton(
-            onPressed: rollDice,
-            child: Text('Roll dice'),
-          )
-        ],
-      ),
-    );
+        appBar: AppBar(
+          title: Text('Yahtzee'),
+          backgroundColor: Colors.pink,
+        ),
+        body: ChangeNotifierProvider(
+          create: (context) => GameModel(),
+          child: Column(
+            children: <Widget>[
+              Dice(),
+              Consumer<GameModel>(
+                  builder: (context, game, child) {
+                    return RaisedButton(
+                      onPressed: game.rollAllUnselectedDice,
+                      child: child,
+                    );
+                  },
+                  child: Text('Roll dice')),
+            ],
+          ),
+        ));
   }
 }
 
 class Dice extends StatelessWidget {
-  final List<int> diceValues;
-
-  Dice({Key key, @required this.diceValues}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(12),
-      child: Row(
-          children: diceValues
-              .map((dieValue) => new Die(dieValue: dieValue))
-              .toList()),
+      child: Consumer<GameModel>(builder: (context, game, child) {
+        return Row(
+            children: game.dice.map((model) => new Die(model: model)).toList());
+      }),
     );
   }
 }
 
 class Die extends StatelessWidget {
-  final int dieValue;
+  final DieModel model;
 
-  Die({Key key, @required this.dieValue}) : super(key: key);
+  Die({this.model});
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(6),
-        child: Image.asset('assets/die-$dieValue.png'),
+      child: Material(
+        child: InkWell(
+          onTap: () => model.toggleSelected(),
+          child: Container(
+            color: model.isSelectedToKeep ? Colors.blue : Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.all(6),
+              child: Image.asset('assets/die-${model.value}.png'),
+            ),
+          ),
+        ),
       ),
     );
   }
