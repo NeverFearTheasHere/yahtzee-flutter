@@ -33,7 +33,9 @@ class HomePage extends StatelessWidget {
               Consumer<GameModel>(
                   builder: (context, game, child) {
                     return RaisedButton(
-                      onPressed: game.rollAllUnselectedDice,
+                      onPressed: game.canRollDice()
+                          ? game.rollAllUnselectedDice
+                          : null,
                       child: child,
                     );
                   },
