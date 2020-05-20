@@ -4,6 +4,7 @@ class DieModel {
   int key;
   int value;
   bool isSelectedToKeep;
+  bool canChangeSelection = true;
   Function notifyListeners;
 
   DieModel({
@@ -14,6 +15,9 @@ class DieModel {
   });
 
   void toggleSelected() {
+    if (!canChangeSelection) {
+      return;
+    }
     if (isSelectedToKeep) {
       isSelectedToKeep = false;
     } else {

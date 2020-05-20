@@ -20,7 +20,14 @@ class GameModel extends ChangeNotifier {
     }
 
     numberOfRollsTaken += 1;
+    if (numberOfRollsTaken == 3) {
 
+      for (var die in dice) {
+        die.isSelectedToKeep = false;
+        die.canChangeSelection = false;
+      }
+
+    }
     notifyListeners();
   }
 

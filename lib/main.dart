@@ -53,7 +53,12 @@ class Dice extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Consumer<GameModel>(builder: (context, game, child) {
         return Row(
-            children: game.dice.map((model) => new Die(model: model)).toList());
+            children: game.dice.map((model) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(2),
+                child: new Die(model: model),
+              ),
+            )).toList());
       }),
     );
   }
@@ -66,19 +71,22 @@ class Die extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Material(
+    return Material(
         child: InkWell(
           onTap: () => model.toggleSelected(),
           child: Container(
-            color: model.isSelectedToKeep ? Colors.blue : Colors.transparent,
+            decoration: new BoxDecoration(
+                color: model.isSelectedToKeep ? Colors.green : Colors.transparent,
+                borderRadius: BorderRadius.circular(16)),
             child: Padding(
-              padding: const EdgeInsets.all(6),
-              child: Image.asset('assets/die-${model.value}.png'),
+              padding: const EdgeInsets.all(3),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(13),
+                child: Image.asset('assets/die-${model.value}.png'),
+              ),
             ),
           ),
         ),
-      ),
     );
   }
 }
