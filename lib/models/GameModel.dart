@@ -21,12 +21,10 @@ class GameModel extends ChangeNotifier {
 
     numberOfRollsTaken += 1;
     if (numberOfRollsTaken == 3) {
-
       for (var die in dice) {
         die.isSelectedToKeep = false;
         die.canChangeSelection = false;
       }
-
     }
     notifyListeners();
   }
@@ -35,14 +33,21 @@ class GameModel extends ChangeNotifier {
     return numberOfRollsTaken < 3 && dice.any((die) => !die.isSelectedToKeep);
   }
 
-  GameModel() {
+  void reset() {
     numberOfRollsTaken = 1;
     dice = new List.generate(
-        5,
-        (i) => new DieModel(
-            key: i,
-            value: random.nextInt(6) + 1,
-            isSelectedToKeep: false,
-            notifyListeners: notifyListeners));
+      5,
+      (i) => new DieModel(
+          key: i,
+          value: random.nextInt(6) + 1,
+          isSelectedToKeep: false,
+          notifyListeners: notifyListeners),
+    );
+
+    notifyListeners();
+  }
+
+  GameModel() {
+    reset();
   }
 }

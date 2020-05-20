@@ -49,6 +49,14 @@ class HomePage extends StatelessWidget {
                     );
                   },
                   child: Text('Roll dice')),
+              Consumer<GameModel>(
+                  builder: (context, game, child) {
+                    return RaisedButton(
+                      onPressed: game.reset,
+                      child: child,
+                    );
+                  },
+                  child: Text('New game')),
             ],
           ),
         ));
